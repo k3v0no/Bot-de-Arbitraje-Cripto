@@ -3,6 +3,11 @@ import Dashboard from './pages/Dashboard';
 import MercadoEnVivo from './pages/MercadoEnVivo';
 import Historial from './pages/Historial';
 
+// CONFIGURACIÓN DE URL DE DESPLIEGUE:
+// En local dejas la primera activa. Cuando subas a Railway, cambias el comentario a la línea de abajo.
+const API_URL = 'http://localhost:4000';
+// const API_URL = 'https://tu-url-de-railway.up.railway.app'; 
+
 export default function App() {
   const [pestanaActiva, setPestanaActiva] = useState('dashboard');
   const [darkMode, setDarkMode] = useState(true);
@@ -18,7 +23,8 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resEstado = await fetch('http://localhost:4000/api/estado');
+        // CAMBIO: Ahora consume la variable de producción dinámica
+        const resEstado = await fetch(`${API_URL}/api/estado`);
         if (!resEstado.ok) throw new Error('OFFLINE');
         const dataEstado = await resEstado.json();
 
@@ -35,7 +41,8 @@ export default function App() {
 
     const fetchHistorial = async () => {
       try {
-        const resHistorial = await fetch('http://localhost:4000/api/historial?limite=50');
+        // CAMBIO: Ahora consume la variable de producción dinámica
+        const resHistorial = await fetch(`${API_URL}/api/historial?limite=50`);
         if (resHistorial.ok) {
           const dataHistorial = await resHistorial.json();
           setHistorial(dataHistorial || []);
@@ -116,6 +123,7 @@ export default function App() {
         {statusServidor === 'OFFLINE' ? (
           <div style={{ padding: '48px', textAlign: 'center', border: `1px solid ${tema.border}`, fontFamily: 'monospace', backgroundColor: tema.cardBg, borderRadius: '4px' }}>
             <div style={{ color: tema.rojo, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '8px' }}>ERR_SOCKET_DISCONNECT</div>
+            <div style={{ color: tema.grisTexto, fontSize: '11px' }}>Intentando reconectar con {API_URL}...</div>
           </div>
         ) : (
           <>

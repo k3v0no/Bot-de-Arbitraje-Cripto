@@ -49,9 +49,9 @@ app.get('/health', (req, res) => {
   res.json({ estatus: 'ONLINE', uptime: process.uptime() });
 });
 
-const PUERTO = 4000;
+const PUERTO = process.env.PUERTO || 4000;
 app.listen(PUERTO, () => {
-  console.log(` SERVIDOR REST API RUNNING: http://localhost:${PUERTO}`);
+  console.log(` SERVIDOR C.A.T.: http://localhost:${PUERTO}`);
   
   iniciarBotCore();
 });
