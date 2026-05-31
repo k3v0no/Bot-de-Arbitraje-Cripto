@@ -3,10 +3,8 @@ import Dashboard from './pages/Dashboard';
 import MercadoEnVivo from './pages/MercadoEnVivo';
 import Historial from './pages/Historial';
 
-// CONFIGURACIÓN DE URL DE DESPLIEGUE:
-// En local dejas la primera activa. Cuando subas a Railway, cambias el comentario a la línea de abajo.
-const API_URL = 'http://localhost:4000';
-// const API_URL = 'https://tu-url-de-railway.up.railway.app'; 
+// URL dinámica optimizada (Sin '/' al final)
+const API_URL = import.meta.env.VITE_API_URL || 'https://bot-de-arbitraje-cripto-production.up.railway.app'; 
 
 export default function App() {
   const [pestanaActiva, setPestanaActiva] = useState('dashboard');
@@ -23,7 +21,6 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // CAMBIO: Ahora consume la variable de producción dinámica
         const resEstado = await fetch(`${API_URL}/api/estado`);
         if (!resEstado.ok) throw new Error('OFFLINE');
         const dataEstado = await resEstado.json();
@@ -41,7 +38,6 @@ export default function App() {
 
     const fetchHistorial = async () => {
       try {
-        // CAMBIO: Ahora consume la variable de producción dinámica
         const resHistorial = await fetch(`${API_URL}/api/historial?limite=50`);
         if (resHistorial.ok) {
           const dataHistorial = await resHistorial.json();
@@ -50,13 +46,15 @@ export default function App() {
       } catch (err) {}
     };
 
+    // Ejecución inmediata inicial
     fetchData();
     fetchHistorial();
 
+    // Intervalo optimizado a 3 segundos para evitar saturación de red
     const intervalo = setInterval(() => {
       fetchData();
       fetchHistorial();
-    }, 1000);
+    }, 3000);
 
     return () => clearInterval(intervalo);
   }, []);
